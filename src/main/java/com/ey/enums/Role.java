@@ -1,8 +1,8 @@
 package com.ey.enums;
 
 public enum Role {
-	ADMIN,
-	PARKING_PROVIDER,
-	CUSTOMER
+	ROLE_ADMIN,
+	ROLE_PARKING_PROVIDER,
+	ROLE_CUSTOMER
 
 }
