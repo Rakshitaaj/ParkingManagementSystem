@@ -1,6 +1,7 @@
 package com.ey.service.impl;
 
 import com.ey.entity.User;
+import com.ey.exception.ResourceNotFoundException;
 import com.ey.repository.UserRepository;
 import com.ey.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getUserById(Long userId) {
         return userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("User not found with id " + userId));
     }
 
     @Override

@@ -4,6 +4,9 @@ import com.ey.entity.ParkingAllocation;
 import com.ey.entity.ParkingSlot;
 import com.ey.entity.User;
 import com.ey.entity.Vehicle;
+import com.ey.exception.BadRequestException;
+import com.ey.exception.ConflictException;
+import com.ey.exception.ResourceNotFoundException;
 import com.ey.repository.ParkingAllocationRepository;
 import com.ey.repository.ParkingSlotRepository;
 import com.ey.repository.UserRepository;
@@ -38,33 +41,37 @@ public class ParkingAllocationServiceImpl implements ParkingAllocationService {
             LocalDateTime startTime,
             LocalDateTime endTime) {
 
+        // Invalid time input
         if (startTime.isAfter(endTime)) {
-            throw new RuntimeException("Start time must be before end time");
+            throw new BadRequestException("Start time must be before end time");
         }
 
+        // Fetch customer, vehicle, slot or throw exception if not found
         User customer = userRepository.findById(customerId)
-                .orElseThrow(() -> new RuntimeException("Customer not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
 
         Vehicle vehicle = vehicleRepository.findById(vehicleId)
-                .orElseThrow(() -> new RuntimeException("Vehicle not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Vehicle not found"));
 
         ParkingSlot slot = slotRepository.findById(slotId)
-                .orElseThrow(() -> new RuntimeException("Slot not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Slot not found"));
 
+        // Slot must be active
         if (!slot.isActive()) {
-            throw new RuntimeException("Slot is not active");
+            throw new BadRequestException("Slot is not active");
         }
 
-        // 🔥 CORE LOGIC: Overlap check
+        // Check for overlapping allocations
         boolean slotAlreadyBooked =
                 allocationRepository.existsBySlotSlotIdAndStartTimeLessThanAndEndTimeGreaterThan(
                         slotId, endTime, startTime
                 );
 
         if (slotAlreadyBooked) {
-            throw new RuntimeException("Slot already booked for given time");
+            throw new ConflictException("Slot already booked for given time");
         }
 
+        // Save allocation
         ParkingAllocation allocation = new ParkingAllocation();
         allocation.setCustomer(customer);
         allocation.setVehicle(vehicle);
@@ -90,7 +97,7 @@ public class ParkingAllocationServiceImpl implements ParkingAllocationService {
     public ParkingAllocation cancelAllocation(Long allocationId) {
 
         ParkingAllocation allocation = allocationRepository.findById(allocationId)
-                .orElseThrow(() -> new RuntimeException("Allocation not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Allocation not found"));
 
         allocation.setStatus("CANCELLED");
         return allocationRepository.save(allocation);

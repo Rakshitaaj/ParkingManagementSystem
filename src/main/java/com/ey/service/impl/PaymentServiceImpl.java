@@ -2,6 +2,8 @@ package com.ey.service.impl;
 
 import com.ey.entity.ParkingAllocation;
 import com.ey.entity.Payment;
+import com.ey.exception.ConflictException;
+import com.ey.exception.ResourceNotFoundException;
 import com.ey.repository.ParkingAllocationRepository;
 import com.ey.repository.PaymentRepository;
 import com.ey.service.PaymentService;
@@ -23,10 +25,11 @@ public class PaymentServiceImpl implements PaymentService {
     public Payment initiatePayment(Long allocationId, Double amount, String paymentMode) {
 
         ParkingAllocation allocation = allocationRepository.findById(allocationId)
-                .orElseThrow(() -> new RuntimeException("Parking allocation not found"));
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Parking allocation not found with id " + allocationId));
 
         if (paymentRepository.findByAllocationAllocationId(allocationId).isPresent()) {
-            throw new RuntimeException("Payment already exists for this allocation");
+            throw new ConflictException("Payment already exists for this allocation");
         }
 
         Payment payment = new Payment();
@@ -42,7 +45,8 @@ public class PaymentServiceImpl implements PaymentService {
     public Payment updatePaymentStatus(Long paymentId, String status) {
 
         Payment payment = paymentRepository.findById(paymentId)
-                .orElseThrow(() -> new RuntimeException("Payment not found"));
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Payment not found with id " + paymentId));
 
         payment.setPaymentStatus(status);
         return paymentRepository.save(payment);
@@ -52,7 +56,8 @@ public class PaymentServiceImpl implements PaymentService {
     public Payment getPaymentByAllocation(Long allocationId) {
 
         return paymentRepository.findByAllocationAllocationId(allocationId)
-                .orElseThrow(() -> new RuntimeException("Payment not found"));
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Payment not found for allocation id " + allocationId));
     }
 
     @Override
