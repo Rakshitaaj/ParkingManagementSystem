@@ -26,7 +26,6 @@ public class ParkingProviderServiceImpl implements ParkingProviderService {
     @Autowired
     private ParkingSlotRepository slotRepository;
 
-    // ================= PARKING LOCATION =================
 
     @Override
     public ParkingLocation addLocation(Long providerId, ParkingLocation location) {
@@ -68,7 +67,6 @@ public class ParkingProviderServiceImpl implements ParkingProviderService {
         return locationRepository.findByParkingProviderUserId(providerId);
     }
 
-    // ================= PARKING SLOT =================
 
     @Override
     public ParkingSlot addSlot(Long locationId, ParkingSlot slot) {

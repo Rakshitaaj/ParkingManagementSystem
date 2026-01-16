@@ -15,8 +15,6 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    // ================= GET =================
-
     // Get user by ID
     @GetMapping("/{userId}")
     public ResponseEntity<User> getUserById(@PathVariable Long userId) {
@@ -29,7 +27,6 @@ public class UserController {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
-    // ================= PUT =================
 
     // Activate user
     @PutMapping("/{userId}/activate")

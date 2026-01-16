@@ -16,7 +16,6 @@ public class ParkingProviderController {
     @Autowired
     private ParkingProviderService parkingProviderService;
 
-    // ================= PARKING LOCATION =================
 
     // Add parking location
     @PostMapping("/{providerId}/locations")
@@ -48,7 +47,6 @@ public class ParkingProviderController {
                 parkingProviderService.getLocationsByProvider(providerId));
     }
 
-    // ================= PARKING SLOT =================
 
     // Add parking slot
     @PostMapping("/locations/{locationId}/slots")

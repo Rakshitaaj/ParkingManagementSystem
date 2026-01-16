@@ -31,7 +31,6 @@ public class CustomerServiceImpl implements CustomerService {
     @Autowired
     private ParkingLocationRepository locationRepository;
 
-    // ================= ID PROOF =================
 
     @Override
     public CustomerIdProof addIdProof(Long customerId, CustomerIdProof idProof) {
@@ -56,7 +55,6 @@ public class CustomerServiceImpl implements CustomerService {
                         new ResourceNotFoundException("ID Proof not found for customer " + customerId));
     }
 
-    // ================= VEHICLE =================
 
     @Override
     public Vehicle addVehicle(Long customerId, Vehicle vehicle) {
@@ -83,7 +81,6 @@ public class CustomerServiceImpl implements CustomerService {
         return vehicleRepository.findByCustomerUserId(customerId);
     }
 
-    // ================= PARKING SEARCH =================
 
     @Override
     public List<ParkingLocation> getParkingLocationsByCity(String city) {

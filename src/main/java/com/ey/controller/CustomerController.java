@@ -17,7 +17,6 @@ public class CustomerController {
     @Autowired
     private CustomerService customerService;
 
-    // ================= ID PROOF =================
 
     // Add ID proof
     @PostMapping("/{customerId}/id-proof")
@@ -36,7 +35,6 @@ public class CustomerController {
         return ResponseEntity.ok(customerService.getIdProof(customerId));
     }
 
-    // ================= VEHICLE =================
 
     // Add vehicle
     @PostMapping("/{customerId}/vehicles")
@@ -55,7 +53,6 @@ public class CustomerController {
         return ResponseEntity.ok(customerService.getVehiclesByCustomer(customerId));
     }
 
-    // ================= PARKING SEARCH =================
 
     // Search parking locations by city
     @GetMapping("/parking-locations")
