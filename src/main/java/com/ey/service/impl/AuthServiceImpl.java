@@ -1,20 +1,21 @@
 package com.ey.service.impl;
 
+import java.util.UUID;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
 import com.ey.entity.Authority;
 import com.ey.entity.User;
 import com.ey.enums.Role;
 import com.ey.exception.BadRequestException;
 import com.ey.exception.ConflictException;
 import com.ey.exception.ResourceNotFoundException;
-import com.ey.exception.UnauthorizedException;
 import com.ey.repository.AuthorityRepository;
 import com.ey.repository.UserRepository;
+import com.ey.security.JwtUtil;
 import com.ey.service.AuthService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-
-import java.util.UUID;
 
 @Service
 public class AuthServiceImpl implements AuthService {
@@ -27,6 +28,11 @@ public class AuthServiceImpl implements AuthService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private JwtUtil jwtUtil;   // ✅ MISSING PIECE (FIX)
+
+    // ================= REGISTER =================
 
     @Override
     public User register(User user, String role) {
@@ -51,6 +57,8 @@ public class AuthServiceImpl implements AuthService {
         return savedUser;
     }
 
+    // ================= LOGIN (JWT) =================
+
     @Override
     public String login(String username, String password) {
 
@@ -59,12 +67,14 @@ public class AuthServiceImpl implements AuthService {
                         new ResourceNotFoundException("Invalid username"));
 
         if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new UnauthorizedException("Invalid password");
+            throw new BadRequestException("Invalid password");
         }
 
-        // JWT token will be generated later
-        return "LOGIN_SUCCESS";
+        // ✅ JWT generation
+        return jwtUtil.generateToken(username);
     }
+
+    // ================= FORGOT PASSWORD =================
 
     @Override
     public String forgotPassword(String email) {
@@ -78,9 +88,11 @@ public class AuthServiceImpl implements AuthService {
 
         userRepository.save(user);
 
-        // Email sending logic will be added later
+        // Email sending logic can be added later
         return resetToken;
     }
+
+    // ================= RESET PASSWORD =================
 
     @Override
     public void resetPassword(String resetToken, String newPassword) {
