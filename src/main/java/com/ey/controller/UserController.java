@@ -1,7 +1,10 @@
 package com.ey.controller;
 
+import com.ey.dto.response.UserResponseDTO;
 import com.ey.entity.User;
+import com.ey.mapper.UserMapper;
 import com.ey.service.UserService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,28 +18,54 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    // Get user by ID
+    // ================= GET USER BY ID =================
+
     @GetMapping("/{userId}")
-    public ResponseEntity<User> getUserById(@PathVariable Long userId) {
-        return ResponseEntity.ok(userService.getUserById(userId));
+    public ResponseEntity<UserResponseDTO> getUserById(
+            @PathVariable Long userId) {
+
+        User user = userService.getUserById(userId);
+
+        return ResponseEntity.ok(
+                UserMapper.toResponse(user));
     }
 
-    // Get all users
+    // ================= GET ALL USERS =================
+
     @GetMapping
-    public ResponseEntity<List<User>> getAllUsers() {
-        return ResponseEntity.ok(userService.getAllUsers());
+    public ResponseEntity<List<UserResponseDTO>> getAllUsers() {
+
+        List<User> users = userService.getAllUsers();
+
+        List<UserResponseDTO> response =
+                users.stream()
+                        .map(UserMapper::toResponse)
+                        .toList();
+
+        return ResponseEntity.ok(response);
     }
 
+    // ================= ACTIVATE USER =================
 
-    // Activate user
     @PutMapping("/{userId}/activate")
-    public ResponseEntity<User> activateUser(@PathVariable Long userId) {
-        return ResponseEntity.ok(userService.activateUser(userId));
+    public ResponseEntity<UserResponseDTO> activateUser(
+            @PathVariable Long userId) {
+
+        User user = userService.activateUser(userId);
+
+        return ResponseEntity.ok(
+                UserMapper.toResponse(user));
     }
 
-    // Deactivate user
+    // ================= DEACTIVATE USER =================
+
     @PutMapping("/{userId}/deactivate")
-    public ResponseEntity<User> deactivateUser(@PathVariable Long userId) {
-        return ResponseEntity.ok(userService.deactivateUser(userId));
+    public ResponseEntity<UserResponseDTO> deactivateUser(
+            @PathVariable Long userId) {
+
+        User user = userService.deactivateUser(userId);
+
+        return ResponseEntity.ok(
+                UserMapper.toResponse(user));
     }
 }

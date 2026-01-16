@@ -1,8 +1,17 @@
 package com.ey.controller;
 
+import com.ey.dto.request.ParkingLocationRequestDTO;
+import com.ey.dto.request.ParkingSlotRequestDTO;
+import com.ey.dto.response.ParkingLocationResponseDTO;
+import com.ey.dto.response.ParkingSlotResponseDTO;
 import com.ey.entity.ParkingLocation;
 import com.ey.entity.ParkingSlot;
+import com.ey.mapper.ParkingLocationMapper;
+import com.ey.mapper.ParkingSlotMapper;
 import com.ey.service.ParkingProviderService;
+
+import jakarta.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,72 +25,106 @@ public class ParkingProviderController {
     @Autowired
     private ParkingProviderService parkingProviderService;
 
+    // ================= PARKING LOCATION =================
 
-    // Add parking location
     @PostMapping("/{providerId}/locations")
-    public ResponseEntity<ParkingLocation> addLocation(
+    public ResponseEntity<ParkingLocationResponseDTO> addLocation(
             @PathVariable Long providerId,
-            @RequestBody ParkingLocation location) {
+            @Valid @RequestBody ParkingLocationRequestDTO request) {
+
+        ParkingLocation location =
+                ParkingLocationMapper.toEntity(request);
+
+        ParkingLocation saved =
+                parkingProviderService.addLocation(providerId, location);
 
         return ResponseEntity.ok(
-                parkingProviderService.addLocation(providerId, location));
+                ParkingLocationMapper.toResponse(saved));
     }
 
-    // Update parking location
     @PutMapping("/{providerId}/locations/{locationId}")
-    public ResponseEntity<ParkingLocation> updateLocation(
+    public ResponseEntity<ParkingLocationResponseDTO> updateLocation(
             @PathVariable Long providerId,
             @PathVariable Long locationId,
-            @RequestBody ParkingLocation location) {
+            @Valid @RequestBody ParkingLocationRequestDTO request) {
+
+        ParkingLocation location =
+                ParkingLocationMapper.toEntity(request);
+
+        ParkingLocation updated =
+                parkingProviderService.updateLocation(
+                        providerId, locationId, location);
 
         return ResponseEntity.ok(
-                parkingProviderService.updateLocation(providerId, locationId, location));
+                ParkingLocationMapper.toResponse(updated));
     }
 
-    // Get locations by provider
     @GetMapping("/{providerId}/locations")
-    public ResponseEntity<List<ParkingLocation>> getLocationsByProvider(
+    public ResponseEntity<List<ParkingLocationResponseDTO>> getLocationsByProvider(
             @PathVariable Long providerId) {
 
-        return ResponseEntity.ok(
-                parkingProviderService.getLocationsByProvider(providerId));
+        List<ParkingLocation> locations =
+                parkingProviderService.getLocationsByProvider(providerId);
+
+        List<ParkingLocationResponseDTO> response =
+                locations.stream()
+                        .map(ParkingLocationMapper::toResponse)
+                        .toList();
+
+        return ResponseEntity.ok(response);
     }
 
+    // ================= PARKING SLOT =================
 
-    // Add parking slot
     @PostMapping("/locations/{locationId}/slots")
-    public ResponseEntity<ParkingSlot> addSlot(
+    public ResponseEntity<ParkingSlotResponseDTO> addSlot(
             @PathVariable Long locationId,
-            @RequestBody ParkingSlot slot) {
+            @Valid @RequestBody ParkingSlotRequestDTO request) {
+
+        ParkingSlot slot =
+                ParkingSlotMapper.toEntity(request);
+
+        ParkingSlot saved =
+                parkingProviderService.addSlot(locationId, slot);
 
         return ResponseEntity.ok(
-                parkingProviderService.addSlot(locationId, slot));
+                ParkingSlotMapper.toResponse(saved));
     }
 
-    // Get slots by location
     @GetMapping("/locations/{locationId}/slots")
-    public ResponseEntity<List<ParkingSlot>> getSlotsByLocation(
+    public ResponseEntity<List<ParkingSlotResponseDTO>> getSlotsByLocation(
             @PathVariable Long locationId) {
 
-        return ResponseEntity.ok(
-                parkingProviderService.getSlotsByLocation(locationId));
+        List<ParkingSlot> slots =
+                parkingProviderService.getSlotsByLocation(locationId);
+
+        List<ParkingSlotResponseDTO> response =
+                slots.stream()
+                        .map(ParkingSlotMapper::toResponse)
+                        .toList();
+
+        return ResponseEntity.ok(response);
     }
 
-    // Activate slot
     @PutMapping("/slots/{slotId}/activate")
-    public ResponseEntity<ParkingSlot> activateSlot(
+    public ResponseEntity<ParkingSlotResponseDTO> activateSlot(
             @PathVariable Long slotId) {
 
+        ParkingSlot slot =
+                parkingProviderService.activateSlot(slotId);
+
         return ResponseEntity.ok(
-                parkingProviderService.activateSlot(slotId));
+                ParkingSlotMapper.toResponse(slot));
     }
 
-    // Deactivate slot
     @PutMapping("/slots/{slotId}/deactivate")
-    public ResponseEntity<ParkingSlot> deactivateSlot(
+    public ResponseEntity<ParkingSlotResponseDTO> deactivateSlot(
             @PathVariable Long slotId) {
 
+        ParkingSlot slot =
+                parkingProviderService.deactivateSlot(slotId);
+
         return ResponseEntity.ok(
-                parkingProviderService.deactivateSlot(slotId));
+                ParkingSlotMapper.toResponse(slot));
     }
 }
