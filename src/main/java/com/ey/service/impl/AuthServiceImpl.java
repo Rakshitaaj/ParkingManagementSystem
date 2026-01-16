@@ -3,13 +3,16 @@ package com.ey.service.impl;
 import com.ey.entity.Authority;
 import com.ey.entity.User;
 import com.ey.enums.Role;
+import com.ey.exception.BadRequestException;
+import com.ey.exception.ConflictException;
+import com.ey.exception.ResourceNotFoundException;
+import com.ey.exception.UnauthorizedException;
 import com.ey.repository.AuthorityRepository;
 import com.ey.repository.UserRepository;
 import com.ey.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 
 import java.util.UUID;
 
@@ -29,11 +32,11 @@ public class AuthServiceImpl implements AuthService {
     public User register(User user, String role) {
 
         if (userRepository.existsByUsername(user.getUsername())) {
-            throw new RuntimeException("Username already exists");
+            throw new ConflictException("Username already exists");
         }
 
         if (userRepository.existsByEmail(user.getEmail())) {
-            throw new RuntimeException("Email already exists");
+            throw new ConflictException("Email already exists");
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -52,13 +55,14 @@ public class AuthServiceImpl implements AuthService {
     public String login(String username, String password) {
 
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("Invalid username"));
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Invalid username"));
 
         if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new RuntimeException("Invalid password");
+            throw new UnauthorizedException("Invalid password");
         }
 
-        // JWT token will be generated later in security layer
+        // JWT token will be generated later
         return "LOGIN_SUCCESS";
     }
 
@@ -66,14 +70,15 @@ public class AuthServiceImpl implements AuthService {
     public String forgotPassword(String email) {
 
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Email not registered"));
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Email not registered"));
 
         String resetToken = UUID.randomUUID().toString();
         user.setResetToken(resetToken);
 
         userRepository.save(user);
 
-        // Email sending logic can be added later
+        // Email sending logic will be added later
         return resetToken;
     }
 
@@ -81,7 +86,8 @@ public class AuthServiceImpl implements AuthService {
     public void resetPassword(String resetToken, String newPassword) {
 
         User user = userRepository.findByResetToken(resetToken)
-                .orElseThrow(() -> new RuntimeException("Invalid reset token"));
+                .orElseThrow(() ->
+                        new BadRequestException("Invalid reset token"));
 
         user.setPassword(passwordEncoder.encode(newPassword));
         user.setResetToken(null);

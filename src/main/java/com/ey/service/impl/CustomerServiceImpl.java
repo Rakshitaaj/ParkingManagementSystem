@@ -4,6 +4,8 @@ import com.ey.entity.CustomerIdProof;
 import com.ey.entity.ParkingLocation;
 import com.ey.entity.User;
 import com.ey.entity.Vehicle;
+import com.ey.exception.ConflictException;
+import com.ey.exception.ResourceNotFoundException;
 import com.ey.repository.CustomerIdProofRepository;
 import com.ey.repository.ParkingLocationRepository;
 import com.ey.repository.UserRepository;
@@ -29,16 +31,17 @@ public class CustomerServiceImpl implements CustomerService {
     @Autowired
     private ParkingLocationRepository locationRepository;
 
-    //ID PROOF
+    // ================= ID PROOF =================
 
     @Override
     public CustomerIdProof addIdProof(Long customerId, CustomerIdProof idProof) {
 
         User customer = userRepository.findById(customerId)
-                .orElseThrow(() -> new RuntimeException("Customer not found"));
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Customer not found with id " + customerId));
 
         if (idProofRepository.existsByIdProofNumber(idProof.getIdProofNumber())) {
-            throw new RuntimeException("ID Proof already exists");
+            throw new ConflictException("ID Proof already exists");
         }
 
         idProof.setCustomer(customer);
@@ -47,20 +50,23 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public CustomerIdProof getIdProof(Long customerId) {
+
         return idProofRepository.findByCustomerUserId(customerId)
-                .orElseThrow(() -> new RuntimeException("ID Proof not found"));
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("ID Proof not found for customer id " + customerId));
     }
 
-    //VEHICLE 
+    // ================= VEHICLE =================
 
     @Override
     public Vehicle addVehicle(Long customerId, Vehicle vehicle) {
 
         User customer = userRepository.findById(customerId)
-                .orElseThrow(() -> new RuntimeException("Customer not found"));
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Customer not found with id " + customerId));
 
         if (vehicleRepository.existsByVehicleNumber(vehicle.getVehicleNumber())) {
-            throw new RuntimeException("Vehicle already registered");
+            throw new ConflictException("Vehicle already registered");
         }
 
         vehicle.setCustomer(customer);
@@ -69,13 +75,25 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public List<Vehicle> getVehiclesByCustomer(Long customerId) {
+
+        if (!userRepository.existsById(customerId)) {
+            throw new ResourceNotFoundException("Customer not found with id " + customerId);
+        }
+
         return vehicleRepository.findByCustomerUserId(customerId);
     }
 
-    //PARKING SEARCH
+    // ================= PARKING SEARCH =================
 
     @Override
     public List<ParkingLocation> getParkingLocationsByCity(String city) {
-        return locationRepository.findByCity(city);
+
+        List<ParkingLocation> locations = locationRepository.findByCity(city);
+
+        if (locations.isEmpty()) {
+            throw new ResourceNotFoundException("No parking locations found in city " + city);
+        }
+
+        return locations;
     }
 }
