@@ -1,7 +1,15 @@
 package com.ey.entity;
 
-import jakarta.persistence.*;
 import java.time.LocalDateTime;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "parking_allocation")
@@ -12,12 +20,15 @@ public class ParkingAllocation {
     private Long allocationId;
 
     @ManyToOne
+    @JsonIgnore
     private ParkingSlot slot;
 
     @ManyToOne
+    @JsonIgnore
     private Vehicle vehicle;
 
     @ManyToOne
+    @JsonIgnore
     private User customer;
 
     private LocalDateTime startTime;

@@ -1,6 +1,13 @@
 package com.ey.entity;
 
-import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "payment")
@@ -15,6 +22,7 @@ public class Payment {
     private String paymentStatus;
 
     @OneToOne
+    @JsonIgnore
     private ParkingAllocation allocation;
 
 	public Long getPaymentId() {

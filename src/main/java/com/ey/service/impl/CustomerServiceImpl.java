@@ -53,7 +53,7 @@ public class CustomerServiceImpl implements CustomerService {
 
         return idProofRepository.findByCustomerUserId(customerId)
                 .orElseThrow(() ->
-                        new ResourceNotFoundException("ID Proof not found for customer id " + customerId));
+                        new ResourceNotFoundException("ID Proof not found for customer " + customerId));
     }
 
     // ================= VEHICLE =================
@@ -87,13 +87,6 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public List<ParkingLocation> getParkingLocationsByCity(String city) {
-
-        List<ParkingLocation> locations = locationRepository.findByCity(city);
-
-        if (locations.isEmpty()) {
-            throw new ResourceNotFoundException("No parking locations found in city " + city);
-        }
-
-        return locations;
+        return locationRepository.findByCity(city);
     }
 }
