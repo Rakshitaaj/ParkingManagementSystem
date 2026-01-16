@@ -1,10 +1,20 @@
 package com.ey.controller;
 
-import com.ey.entity.User;
-import com.ey.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.ey.dto.request.RegisterRequestDTO;
+import com.ey.dto.response.UserResponseDTO;
+import com.ey.entity.User;
+import com.ey.service.AuthService;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -15,11 +25,26 @@ public class AuthController {
 
     //REGISTER
     @PostMapping("/register/{role}")
-    public ResponseEntity<?> register(
+    public ResponseEntity<UserResponseDTO> register(
             @PathVariable String role,
-            @RequestBody User user) {
+            @Valid @RequestBody RegisterRequestDTO request) {
 
-        return ResponseEntity.ok(authService.register(user, role));
+        User user = new User();
+        user.setFullName(request.getFullName());
+        user.setUsername(request.getUsername());
+        user.setEmail(request.getEmail());
+        user.setPassword(request.getPassword());
+
+        User savedUser = authService.register(user, role);
+
+        UserResponseDTO response = new UserResponseDTO();
+        response.setUserId(savedUser.getUserId());
+        response.setFullName(savedUser.getFullName());
+        response.setUsername(savedUser.getUsername());
+        response.setEmail(savedUser.getEmail());
+        response.setEnabled(savedUser.isEnabled());
+
+        return ResponseEntity.ok(response);
     }
 
     //LOGIN

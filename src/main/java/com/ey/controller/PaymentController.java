@@ -1,12 +1,24 @@
 package com.ey.controller;
 
-import com.ey.entity.Payment;
-import com.ey.service.PaymentService;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import com.ey.dto.request.PaymentRequestDTO;
+import com.ey.dto.response.PaymentResponseDTO;
+import com.ey.entity.Payment;
+import com.ey.service.PaymentService;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/payments")
@@ -17,13 +29,22 @@ public class PaymentController {
 
 
     @PostMapping("/initiate")
-    public ResponseEntity<Payment> initiatePayment(
-            @RequestParam Long allocationId,
-            @RequestParam Double amount,
-            @RequestParam String paymentMode) {
+    public ResponseEntity<PaymentResponseDTO> initiatePayment(
+            @Valid @RequestBody PaymentRequestDTO request) {
 
-        return ResponseEntity.ok(
-                paymentService.initiatePayment(allocationId, amount, paymentMode));
+        Payment payment = paymentService.initiatePayment(
+                request.getAllocationId(),
+                request.getAmount(),
+                request.getPaymentMode()
+        );
+
+        PaymentResponseDTO response = new PaymentResponseDTO();
+        response.setPaymentId(payment.getPaymentId());
+        response.setAmount(payment.getAmount());
+        response.setPaymentMode(payment.getPaymentMode());
+        response.setPaymentStatus(payment.getPaymentStatus());
+
+        return ResponseEntity.ok(response);
     }
 
 
