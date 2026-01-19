@@ -35,6 +35,8 @@ public class AuthServiceImpl implements AuthService {
     @Autowired
     private JwtUtil jwtUtil;
 
+
+
     @Override
     public User register(User user, String role) {
         logger.info("Register attempt for username: {}", user.getUsername());
@@ -101,14 +103,21 @@ public class AuthServiceImpl implements AuthService {
 
         logger.info("Reset password attempt with token: {}", resetToken);
 
-        User user = userRepository.findByResetToken(resetToken).orElseThrow(() -> {
+        User user = userRepository.findByResetToken(resetToken).orElseThrow(() -> 
+        {
                     logger.error("Reset password failed - invalid token");
                     return new BadRequestException("Invalid reset token");
-                });
+        });
 
         user.setPassword(passwordEncoder.encode(newPassword));
         user.setResetToken(null);
         userRepository.save(user);
         logger.info("Password reset successful for userId {}",user.getUserId());
     }
+    
+    @Override
+    public void logout() {
+        
+    }
+
 }

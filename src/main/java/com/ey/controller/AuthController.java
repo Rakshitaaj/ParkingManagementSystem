@@ -43,4 +43,13 @@ public class AuthController {
         authService.resetPassword(resetToken, newPassword);
         return ResponseEntity.ok("Password reset successful");
     }
+    
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout() {
+        return ResponseEntity.ok("Logout successful");
+    }
+    
+    
+
+
 }
