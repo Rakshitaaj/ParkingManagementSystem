@@ -1,5 +1,18 @@
 package com.ey.controller;
 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.ey.dto.request.ParkingLocationRequestDTO;
 import com.ey.dto.request.ParkingSlotRequestDTO;
 import com.ey.dto.response.ParkingLocationResponseDTO;
@@ -12,20 +25,12 @@ import com.ey.service.ParkingProviderService;
 
 import jakarta.validation.Valid;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/providers")
 public class ParkingProviderController {
 
     @Autowired
     private ParkingProviderService parkingProviderService;
-
-    // ================= PARKING LOCATION =================
 
     @PostMapping("/{providerId}/locations")
     public ResponseEntity<ParkingLocationResponseDTO> addLocation(
@@ -74,7 +79,6 @@ public class ParkingProviderController {
         return ResponseEntity.ok(response);
     }
 
-    // ================= PARKING SLOT =================
 
     @PostMapping("/locations/{locationId}/slots")
     public ResponseEntity<ParkingSlotResponseDTO> addSlot(
@@ -127,4 +131,29 @@ public class ParkingProviderController {
         return ResponseEntity.ok(
                 ParkingSlotMapper.toResponse(slot));
     }
+    
+    @PutMapping("/slots/{slotId}")
+    public ResponseEntity<ParkingSlotResponseDTO> updateSlot(
+            @PathVariable Long slotId,
+            @RequestBody ParkingSlotRequestDTO request) {
+
+        ParkingSlot slot = new ParkingSlot();
+        slot.setSlotNumber(request.getSlotNumber());
+        slot.setActive(request.getActive()); // ✅ FIXED
+
+        return ResponseEntity.ok(
+                ParkingSlotMapper.toResponse(
+                        parkingProviderService.updateSlot(slotId, slot)));
+    }
+    
+    @DeleteMapping("/slots/{slotId}")
+    public ResponseEntity<String> deleteSlot(
+            @PathVariable Long slotId) {
+
+        parkingProviderService.deleteSlot(slotId);
+        return ResponseEntity.ok("Parking slot deleted successfully");
+    }
+
+
+
 }

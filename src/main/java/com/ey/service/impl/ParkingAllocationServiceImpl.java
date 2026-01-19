@@ -1,5 +1,11 @@
 package com.ey.service.impl;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.ey.entity.ParkingAllocation;
 import com.ey.entity.ParkingSlot;
 import com.ey.entity.User;
@@ -12,11 +18,6 @@ import com.ey.repository.ParkingSlotRepository;
 import com.ey.repository.UserRepository;
 import com.ey.repository.VehicleRepository;
 import com.ey.service.ParkingAllocationService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 public class ParkingAllocationServiceImpl implements ParkingAllocationService {
@@ -41,27 +42,32 @@ public class ParkingAllocationServiceImpl implements ParkingAllocationService {
             LocalDateTime startTime,
             LocalDateTime endTime) {
 
-        // Invalid time input
         if (startTime.isAfter(endTime)) {
             throw new BadRequestException("Start time must be before end time");
         }
 
-        // Fetch customer, vehicle, slot or throw exception if not found
         User customer = userRepository.findById(customerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
 
         Vehicle vehicle = vehicleRepository.findById(vehicleId)
                 .orElseThrow(() -> new ResourceNotFoundException("Vehicle not found"));
 
-        ParkingSlot slot = slotRepository.findById(slotId)
-                .orElseThrow(() -> new ResourceNotFoundException("Slot not found"));
+        
+        
+        if (vehicle.getCustomer() == null ||
+                !vehicle.getCustomer().getUserId().equals(customerId)) {
+                throw new BadRequestException(
+                        "Vehicle does not belong to this customer");
+            }
 
-        // Slot must be active
-        if (!slot.isActive()) {
-            throw new BadRequestException("Slot is not active");
-        }
+            ParkingSlot slot = slotRepository.findById(slotId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Slot not found"));
 
-        // Check for overlapping allocations
+            if (Boolean.FALSE.equals(slot.isActive())) {
+                throw new BadRequestException("Slot is not active");
+            }
+
+
         boolean slotAlreadyBooked =
                 allocationRepository.existsBySlotSlotIdAndStartTimeLessThanAndEndTimeGreaterThan(
                         slotId, endTime, startTime
@@ -71,7 +77,6 @@ public class ParkingAllocationServiceImpl implements ParkingAllocationService {
             throw new ConflictException("Slot already booked for given time");
         }
 
-        // Save allocation
         ParkingAllocation allocation = new ParkingAllocation();
         allocation.setCustomer(customer);
         allocation.setVehicle(vehicle);
@@ -102,4 +107,49 @@ public class ParkingAllocationServiceImpl implements ParkingAllocationService {
         allocation.setStatus("CANCELLED");
         return allocationRepository.save(allocation);
     }
+    
+    @Override
+    public ParkingAllocation getAllocationById(Long allocationId) {
+        return allocationRepository.findById(allocationId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Allocation not found"));
+    }
+    
+    @Override
+    public ParkingAllocation extendAllocationTime(
+            Long allocationId,
+            LocalDateTime newEndTime) {
+
+        ParkingAllocation allocation =
+                allocationRepository.findById(allocationId)
+                        .orElseThrow(() ->
+                                new ResourceNotFoundException("Allocation not found"));
+
+        if (newEndTime.isBefore(allocation.getEndTime())) {
+            throw new BadRequestException(
+                    "New end time must be after current end time");
+        }
+
+        boolean conflict =
+                allocationRepository
+                        .existsBySlotSlotIdAndStartTimeLessThanAndEndTimeGreaterThan(
+                                allocation.getSlot().getSlotId(),
+                                newEndTime,
+                                allocation.getEndTime());
+
+        if (conflict) {
+            throw new ConflictException(
+                    "Slot already booked for the extended time");
+        }
+
+        allocation.setEndTime(newEndTime);
+        return allocationRepository.save(allocation);
+    }
+    
+  
+    
+
+
+
+
 }

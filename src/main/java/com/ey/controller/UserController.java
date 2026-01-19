@@ -1,15 +1,21 @@
 package com.ey.controller;
 
-import com.ey.dto.response.UserResponseDTO;
-import com.ey.entity.User;
-import com.ey.mapper.UserMapper;
-import com.ey.service.UserService;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import com.ey.dto.response.UserResponseDTO;
+import com.ey.entity.User;
+import com.ey.enums.Role;
+import com.ey.mapper.UserMapper;
+import com.ey.service.UserService;
 
 @RestController
 @RequestMapping("/api/users")
@@ -18,7 +24,6 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    // ================= GET USER BY ID =================
 
     @GetMapping("/{userId}")
     public ResponseEntity<UserResponseDTO> getUserById(
@@ -30,7 +35,6 @@ public class UserController {
                 UserMapper.toResponse(user));
     }
 
-    // ================= GET ALL USERS =================
 
     @GetMapping
     public ResponseEntity<List<UserResponseDTO>> getAllUsers() {
@@ -45,7 +49,6 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
-    // ================= ACTIVATE USER =================
 
     @PutMapping("/{userId}/activate")
     public ResponseEntity<UserResponseDTO> activateUser(
@@ -57,8 +60,6 @@ public class UserController {
                 UserMapper.toResponse(user));
     }
 
-    // ================= DEACTIVATE USER =================
-
     @PutMapping("/{userId}/deactivate")
     public ResponseEntity<UserResponseDTO> deactivateUser(
             @PathVariable Long userId) {
@@ -68,4 +69,27 @@ public class UserController {
         return ResponseEntity.ok(
                 UserMapper.toResponse(user));
     }
+    
+    @GetMapping("/role/{role}")
+    public ResponseEntity<List<UserResponseDTO>> getUsersByRole(
+            @PathVariable Role role) {
+
+        List<UserResponseDTO> response =
+                userService.getUsersByRole(role)
+                        .stream()
+                        .map(UserMapper::toResponse)
+                        .toList();
+
+        return ResponseEntity.ok(response);
+    }
+    
+    @DeleteMapping("/{userId}")
+    public ResponseEntity<String> deleteUser(
+            @PathVariable Long userId) {
+
+        userService.deleteUser(userId);
+        return ResponseEntity.ok("User deactivated successfully");
+    }
+
+
 }

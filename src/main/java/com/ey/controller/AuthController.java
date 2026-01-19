@@ -19,25 +19,20 @@ public class AuthController {
     @Autowired
     private AuthService authService;
 
-    // ================= REGISTER =================
     @PostMapping("/register/{role}")
     public ResponseEntity<UserResponseDTO> register(
             @PathVariable String role,
             @Valid @RequestBody RegisterRequestDTO request) {
 
-        // DTO → Entity (via mapper)
         User user = UserMapper.toEntity(request);
 
-        // Service call
         User savedUser = authService.register(user, role);
 
-        // Entity → Response DTO (via mapper)
         UserResponseDTO response = UserMapper.toResponse(savedUser);
 
         return ResponseEntity.ok(response);
     }
 
-    // ================= LOGIN =================
     @PostMapping("/login")
     public ResponseEntity<String> login(
             @RequestParam String username,
@@ -46,7 +41,6 @@ public class AuthController {
         return ResponseEntity.ok(authService.login(username, password));
     }
 
-    // ================= FORGOT PASSWORD =================
     @PostMapping("/forgot-password")
     public ResponseEntity<String> forgotPassword(
             @RequestParam String email) {
@@ -57,7 +51,6 @@ public class AuthController {
         );
     }
 
-    // ================= RESET PASSWORD =================
     @PostMapping("/reset-password")
     public ResponseEntity<String> resetPassword(
             @RequestParam String resetToken,

@@ -64,4 +64,25 @@ public class PaymentServiceImpl implements PaymentService {
     public List<Payment> getAllPayments() {
         return paymentRepository.findAll();
     }
+    
+    @Override
+    public Payment getPaymentById(Long paymentId) {
+        return paymentRepository.findById(paymentId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Payment not found"));
+    }
+    
+    @Override
+    public List<Payment> getPaymentsByCustomer(Long customerId) {
+        return paymentRepository
+                .findByAllocationCustomerUserId(customerId);
+    }
+    
+    @Override
+    public List<Payment> getPaymentsByStatus(String status) {
+        return paymentRepository.findByPaymentStatus(status);
+    }
+
+
+
 }

@@ -21,7 +21,6 @@ public class PaymentController {
     @Autowired
     private PaymentService paymentService;
 
-    // ================= INITIATE PAYMENT =================
 
     @PostMapping("/initiate")
     public ResponseEntity<PaymentResponseDTO> initiatePayment(
@@ -37,7 +36,6 @@ public class PaymentController {
                 PaymentMapper.toResponse(payment));
     }
 
-    // ================= UPDATE PAYMENT STATUS =================
 
     @PutMapping("/{paymentId}/status")
     public ResponseEntity<PaymentResponseDTO> updatePaymentStatus(
@@ -51,7 +49,6 @@ public class PaymentController {
                 PaymentMapper.toResponse(payment));
     }
 
-    // ================= GET PAYMENT BY ALLOCATION =================
 
     @GetMapping("/allocation/{allocationId}")
     public ResponseEntity<PaymentResponseDTO> getPaymentByAllocation(
@@ -64,7 +61,6 @@ public class PaymentController {
                 PaymentMapper.toResponse(payment));
     }
 
-    // ================= GET ALL PAYMENTS (ADMIN) =================
 
     @GetMapping
     public ResponseEntity<List<PaymentResponseDTO>> getAllPayments() {
@@ -79,4 +75,38 @@ public class PaymentController {
 
         return ResponseEntity.ok(response);
     }
+    
+    @GetMapping("/{paymentId}")
+    public ResponseEntity<PaymentResponseDTO> getPaymentById(
+            @PathVariable Long paymentId) {
+
+        return ResponseEntity.ok(
+                PaymentMapper.toResponse(
+                        paymentService.getPaymentById(paymentId)));
+    }
+    
+    @GetMapping("/customer/{customerId}")
+    public ResponseEntity<List<PaymentResponseDTO>> getPaymentsByCustomer(
+            @PathVariable Long customerId) {
+
+        return ResponseEntity.ok(
+                paymentService.getPaymentsByCustomer(customerId)
+                        .stream()
+                        .map(PaymentMapper::toResponse)
+                        .toList());
+    }
+    
+    @GetMapping("/status/{status}")
+    public ResponseEntity<List<PaymentResponseDTO>> getPaymentsByStatus(
+            @PathVariable String status) {
+
+        return ResponseEntity.ok(
+                paymentService.getPaymentsByStatus(status)
+                        .stream()
+                        .map(PaymentMapper::toResponse)
+                        .toList());
+    }
+
+
+
 }

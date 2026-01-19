@@ -1,5 +1,10 @@
 package com.ey.service.impl;
 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.ey.entity.ParkingLocation;
 import com.ey.entity.ParkingSlot;
 import com.ey.entity.User;
@@ -9,10 +14,6 @@ import com.ey.repository.ParkingLocationRepository;
 import com.ey.repository.ParkingSlotRepository;
 import com.ey.repository.UserRepository;
 import com.ey.service.ParkingProviderService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class ParkingProviderServiceImpl implements ParkingProviderService {
@@ -112,4 +113,35 @@ public class ParkingProviderServiceImpl implements ParkingProviderService {
         slot.setActive(false);
         return slotRepository.save(slot);
     }
+    
+    @Override
+    public ParkingSlot updateSlot(Long slotId, ParkingSlot slot) {
+
+        ParkingSlot existing =
+                slotRepository.findById(slotId)
+                        .orElseThrow(() ->
+                                new ResourceNotFoundException("Slot not found"));
+
+        if (slot.getSlotNumber() != null) {
+            existing.setSlotNumber(slot.getSlotNumber());
+        }
+
+        existing.setActive(slot.isActive());
+
+        return slotRepository.save(existing);
+    }
+    
+    @Override
+    public void deleteSlot(Long slotId) {
+
+        ParkingSlot slot = slotRepository.findById(slotId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Slot not found"));
+
+        slotRepository.delete(slot);
+    }
+    
+
+
+
 }

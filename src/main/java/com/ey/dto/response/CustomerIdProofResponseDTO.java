@@ -1,6 +1,5 @@
 package com.ey.dto.response;
 
-import com.ey.enums.IdProofType;
 
 public class CustomerIdProofResponseDTO {
 

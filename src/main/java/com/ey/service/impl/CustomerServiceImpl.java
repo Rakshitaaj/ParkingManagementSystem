@@ -1,20 +1,26 @@
 package com.ey.service.impl;
 
-import com.ey.entity.CustomerIdProof;
-import com.ey.entity.ParkingLocation;
-import com.ey.entity.User;
-import com.ey.entity.Vehicle;
-import com.ey.exception.ConflictException;
-import com.ey.exception.ResourceNotFoundException;
-import com.ey.repository.CustomerIdProofRepository;
-import com.ey.repository.ParkingLocationRepository;
-import com.ey.repository.UserRepository;
-import com.ey.repository.VehicleRepository;
-import com.ey.service.CustomerService;
+import java.time.LocalDateTime;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import com.ey.entity.CustomerIdProof;
+import com.ey.entity.ParkingLocation;
+import com.ey.entity.ParkingSlot;
+import com.ey.entity.User;
+import com.ey.entity.Vehicle;
+import com.ey.exception.BadRequestException;
+import com.ey.exception.ConflictException;
+import com.ey.exception.ResourceNotFoundException;
+import com.ey.repository.CustomerIdProofRepository;
+import com.ey.repository.ParkingAllocationRepository;
+import com.ey.repository.ParkingLocationRepository;
+import com.ey.repository.ParkingSlotRepository;
+import com.ey.repository.UserRepository;
+import com.ey.repository.VehicleRepository;
+import com.ey.service.CustomerService;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {
@@ -30,6 +36,12 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Autowired
     private ParkingLocationRepository locationRepository;
+    
+    @Autowired
+    private ParkingSlotRepository slotRepository;
+    
+    @Autowired
+    private ParkingAllocationRepository allocationRepository;
 
 
     @Override
@@ -86,4 +98,28 @@ public class CustomerServiceImpl implements CustomerService {
     public List<ParkingLocation> getParkingLocationsByCity(String city) {
         return locationRepository.findByCity(city);
     }
+    @Override
+    public List<ParkingSlot> getAvailableSlots(
+            Long locationId,
+            LocalDateTime startTime,
+            LocalDateTime endTime) {
+
+        if (startTime.isAfter(endTime)) {
+            throw new BadRequestException("Start time must be before end time");
+        }
+
+        List<ParkingSlot> activeSlots =
+                slotRepository
+                        .findByLocationLocationIdAndActiveTrue(locationId);
+
+        return activeSlots.stream()
+                .filter(slot ->
+                        allocationRepository
+                                .findBySlotSlotIdAndStartTimeLessThanAndEndTimeGreaterThan(
+                                        slot.getSlotId(),
+                                        endTime,
+                                        startTime)
+                                .isEmpty()).toList();
+    }
+
 }

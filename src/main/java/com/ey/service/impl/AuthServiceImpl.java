@@ -30,9 +30,7 @@ public class AuthServiceImpl implements AuthService {
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    private JwtUtil jwtUtil;   // ✅ MISSING PIECE (FIX)
-
-    // ================= REGISTER =================
+    private JwtUtil jwtUtil;   
 
     @Override
     public User register(User user, String role) {
@@ -57,7 +55,6 @@ public class AuthServiceImpl implements AuthService {
         return savedUser;
     }
 
-    // ================= LOGIN (JWT) =================
 
     @Override
     public String login(String username, String password) {
@@ -70,11 +67,9 @@ public class AuthServiceImpl implements AuthService {
             throw new BadRequestException("Invalid password");
         }
 
-        // ✅ JWT generation
         return jwtUtil.generateToken(username);
     }
 
-    // ================= FORGOT PASSWORD =================
 
     @Override
     public String forgotPassword(String email) {
@@ -88,11 +83,9 @@ public class AuthServiceImpl implements AuthService {
 
         userRepository.save(user);
 
-        // Email sending logic can be added later
         return resetToken;
     }
 
-    // ================= RESET PASSWORD =================
 
     @Override
     public void resetPassword(String resetToken, String newPassword) {

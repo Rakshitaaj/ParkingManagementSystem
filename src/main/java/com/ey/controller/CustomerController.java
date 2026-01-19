@@ -1,20 +1,29 @@
 package com.ey.controller;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.ey.dto.request.CustomerIdProofRequestDTO;
 import com.ey.dto.request.VehicleRequestDTO;
 import com.ey.dto.response.CustomerIdProofResponseDTO;
 import com.ey.dto.response.ParkingLocationResponseDTO;
+import com.ey.dto.response.ParkingSlotResponseDTO;
 import com.ey.dto.response.VehicleResponseDTO;
 import com.ey.entity.CustomerIdProof;
 import com.ey.entity.ParkingLocation;
 import com.ey.entity.Vehicle;
 import com.ey.mapper.CustomerIdProofMapper;
+import com.ey.mapper.ParkingSlotMapper;
 import com.ey.mapper.VehicleMapper;
 import com.ey.service.CustomerService;
 
@@ -27,22 +36,20 @@ public class CustomerController {
     @Autowired
     private CustomerService customerService;
 
-    // ================= ID PROOF =================
 
     @PostMapping("/{customerId}/id-proof")
     public ResponseEntity<CustomerIdProofResponseDTO> addIdProof(
             @PathVariable Long customerId,
             @Valid @RequestBody CustomerIdProofRequestDTO request) {
 
-        // DTO → Entity
         CustomerIdProof idProof =
                 CustomerIdProofMapper.toEntity(request);
 
-        // Service
+        
         CustomerIdProof saved =
                 customerService.addIdProof(customerId, idProof);
 
-        // Entity → Response DTO
+        
         return ResponseEntity.ok(
                 CustomerIdProofMapper.toResponse(saved));
     }
@@ -58,21 +65,21 @@ public class CustomerController {
                 CustomerIdProofMapper.toResponse(saved));
     }
 
-    // ================= VEHICLE =================
+   
 
     @PostMapping("/{customerId}/vehicles")
     public ResponseEntity<VehicleResponseDTO> addVehicle(
             @PathVariable Long customerId,
             @Valid @RequestBody VehicleRequestDTO request) {
 
-        // DTO → Entity
+        
         Vehicle vehicle = VehicleMapper.toEntity(request);
 
-        // Service
+       
         Vehicle saved =
                 customerService.addVehicle(customerId, vehicle);
 
-        // Entity → Response DTO
+        
         return ResponseEntity.ok(
                 VehicleMapper.toResponse(saved));
     }
@@ -92,7 +99,6 @@ public class CustomerController {
         return ResponseEntity.ok(response);
     }
 
-    // ================= PARKING SEARCH =================
 
     @GetMapping("/parking-locations")
     public ResponseEntity<List<ParkingLocationResponseDTO>> searchParking(
@@ -115,4 +121,19 @@ public class CustomerController {
 
         return ResponseEntity.ok(response);
     }
+    
+    @GetMapping("/locations/{locationId}/available-slots")
+    public ResponseEntity<List<ParkingSlotResponseDTO>> getAvailableSlots(
+            @PathVariable Long locationId,
+            @RequestParam LocalDateTime startTime,
+            @RequestParam LocalDateTime endTime) {
+
+        return ResponseEntity.ok(
+                customerService
+                        .getAvailableSlots(locationId, startTime, endTime)
+                        .stream()
+                        .map(ParkingSlotMapper::toResponse)
+                        .toList());
+    }
+
 }

@@ -17,4 +17,11 @@ public interface ParkingAllocationRepository extends JpaRepository<ParkingAlloca
             LocalDateTime endTime,
             LocalDateTime startTime
     );
+    
+    List<ParkingAllocation>
+    findBySlotSlotIdAndStartTimeLessThanAndEndTimeGreaterThan(
+            Long slotId,
+            LocalDateTime endTime,
+            LocalDateTime startTime);
+
 }

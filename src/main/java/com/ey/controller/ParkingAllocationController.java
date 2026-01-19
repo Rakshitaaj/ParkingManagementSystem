@@ -1,18 +1,23 @@
 package com.ey.controller;
 
-import com.ey.dto.request.ParkingAllocationRequestDTO;
+import java.time.LocalDateTime;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.ey.dto.response.ParkingAllocationResponseDTO;
 import com.ey.entity.ParkingAllocation;
 import com.ey.mapper.ParkingAllocationMapper;
 import com.ey.service.ParkingAllocationService;
-
-import jakarta.validation.Valid;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/allocations")
@@ -21,26 +26,26 @@ public class ParkingAllocationController {
     @Autowired
     private ParkingAllocationService parkingAllocationService;
 
-    // ================= ALLOCATE SLOT =================
 
     @PostMapping
-    public ResponseEntity<ParkingAllocationResponseDTO> allocateSlot(
-            @Valid @RequestBody ParkingAllocationRequestDTO request) {
+    public ResponseEntity<ParkingAllocation> allocateSlot(
+            @RequestParam Long customerId,
+            @RequestParam Long vehicleId,
+            @RequestParam Long slotId,
 
-        ParkingAllocation allocation =
-                parkingAllocationService.allocateSlot(
-                        request.getCustomerId(),
-                        request.getVehicleId(),
-                        request.getSlotId(),
-                        request.getStartTime(),
-                        request.getEndTime()
-                );
+            @RequestParam
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+            LocalDateTime startTime,
+
+            @RequestParam
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+            LocalDateTime endTime) {
 
         return ResponseEntity.ok(
-                ParkingAllocationMapper.toResponse(allocation));
+                parkingAllocationService.allocateSlot(
+                        customerId, vehicleId, slotId, startTime, endTime));
     }
 
-    // ================= GET =================
 
     @GetMapping("/customer/{customerId}")
     public ResponseEntity<List<ParkingAllocationResponseDTO>> getAllocationsByCustomer(
@@ -72,7 +77,6 @@ public class ParkingAllocationController {
         return ResponseEntity.ok(response);
     }
 
-    // ================= CANCEL =================
 
     @PutMapping("/{allocationId}/cancel")
     public ResponseEntity<ParkingAllocationResponseDTO> cancelAllocation(
@@ -84,4 +88,28 @@ public class ParkingAllocationController {
         return ResponseEntity.ok(
                 ParkingAllocationMapper.toResponse(allocation));
     }
+    
+    @GetMapping("/{allocationId}")
+    public ResponseEntity<ParkingAllocationResponseDTO> getAllocationById(
+            @PathVariable Long allocationId) {
+
+        ParkingAllocation allocation =
+                parkingAllocationService.getAllocationById(allocationId);
+
+        return ResponseEntity.ok(
+                ParkingAllocationMapper.toResponse(allocation));
+    }
+    
+    @PutMapping("/{allocationId}/extend")
+    public ResponseEntity<ParkingAllocationResponseDTO> extendAllocation(
+            @PathVariable Long allocationId,
+            @RequestParam LocalDateTime newEndTime) {
+
+        return ResponseEntity.ok(
+                ParkingAllocationMapper.toResponse(
+                        parkingAllocationService
+                                .extendAllocationTime(allocationId, newEndTime)));
+    }
+
+
 }

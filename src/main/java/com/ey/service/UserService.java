@@ -1,8 +1,9 @@
 package com.ey.service;
 
-import com.ey.entity.User;
-
 import java.util.List;
+
+import com.ey.entity.User;
+import com.ey.enums.Role;
 
 public interface UserService {
 
@@ -13,4 +14,10 @@ public interface UserService {
     User activateUser(Long userId);
 
     User deactivateUser(Long userId);
+    
+    List<User> getUsersByRole(Role role);
+    
+    void deleteUser(Long userId);
+
+
 }

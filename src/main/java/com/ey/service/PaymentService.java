@@ -13,4 +13,12 @@ public interface PaymentService {
     Payment getPaymentByAllocation(Long allocationId);
 
     List<Payment> getAllPayments();
+    
+    Payment getPaymentById(Long paymentId);
+    
+    List<Payment> getPaymentsByCustomer(Long customerId);
+    
+    List<Payment> getPaymentsByStatus(String status);
+
+
 }

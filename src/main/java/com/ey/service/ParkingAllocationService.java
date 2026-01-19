@@ -20,4 +20,11 @@ public interface ParkingAllocationService {
     List<ParkingAllocation> getAllocationsBySlot(Long slotId);
 
     ParkingAllocation cancelAllocation(Long allocationId);
+
+    ParkingAllocation getAllocationById(Long allocationId);
+
+    ParkingAllocation extendAllocationTime(
+            Long allocationId,
+            LocalDateTime newEndTime);
+
 }

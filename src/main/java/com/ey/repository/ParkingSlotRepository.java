@@ -10,4 +10,7 @@ public interface ParkingSlotRepository extends JpaRepository<ParkingSlot, Long> 
     List<ParkingSlot> findByLocationLocationId(Long locationId);
 
     List<ParkingSlot> findByActiveTrue();
+    
+    List<ParkingSlot> findByLocationLocationIdAndActiveTrue(Long locationId);
+
 }

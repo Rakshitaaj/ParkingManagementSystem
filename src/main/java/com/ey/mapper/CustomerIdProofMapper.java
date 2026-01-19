@@ -7,7 +7,6 @@ import com.ey.enums.IdProofType;
 
 public class CustomerIdProofMapper {
 
-    // RequestDTO → Entity
     public static CustomerIdProof toEntity(CustomerIdProofRequestDTO dto) {
         CustomerIdProof entity = new CustomerIdProof();
         entity.setIdProofType(
@@ -16,7 +15,6 @@ public class CustomerIdProofMapper {
         return entity;
     }
 
-    // Entity → ResponseDTO
     public static CustomerIdProofResponseDTO toResponse(CustomerIdProof entity) {
         CustomerIdProofResponseDTO dto = new CustomerIdProofResponseDTO();
         dto.setId(entity.getId());
