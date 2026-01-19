@@ -12,11 +12,11 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "parking_allocation")
+@Table(name="parking_allocation")
 public class ParkingAllocation {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long allocationId;
 
     @ManyToOne
@@ -33,7 +33,6 @@ public class ParkingAllocation {
 
     private LocalDateTime startTime;
     private LocalDateTime endTime;
-
     private String status;
 
 	public Long getAllocationId() {

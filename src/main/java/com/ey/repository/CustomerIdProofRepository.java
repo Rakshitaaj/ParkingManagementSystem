@@ -8,6 +8,5 @@ import java.util.Optional;
 public interface CustomerIdProofRepository extends JpaRepository<CustomerIdProof, Long> {
 
     Optional<CustomerIdProof> findByCustomerUserId(Long userId);
-
     boolean existsByIdProofNumber(String idProofNumber);
 }

@@ -11,11 +11,11 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "parking_location")
+@Table(name="parking_location")
 public class ParkingLocation {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long locationId;
 
     private String locationName;
@@ -23,11 +23,11 @@ public class ParkingLocation {
     private String address;
 
     @ManyToOne
-    @JoinColumn(name = "provider_id", nullable = false)
+    @JoinColumn(name="provider_id",nullable=false)
     @JsonIgnore
     private User parkingProvider;
 
-    private boolean active = true;
+    private boolean active=true;
 
 	public Long getLocationId() {
 		return locationId;

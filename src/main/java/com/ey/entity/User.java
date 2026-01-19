@@ -8,15 +8,15 @@ import java.util.Set;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long userId;
 
     private String fullName;
 
-    @Column(unique = true, nullable = false)
+    @Column(unique=true, nullable=false)
     private String username;
 
-    @Column(unique = true, nullable = false)
+    @Column(unique=true, nullable=false)
     private String email;
 
     private String password;
@@ -25,7 +25,7 @@ public class User {
 
     private String resetToken;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy="user", cascade=CascadeType.ALL, fetch=FetchType.EAGER)
     private Set<Authority> authorities;
 
 	public Long getUserId() {

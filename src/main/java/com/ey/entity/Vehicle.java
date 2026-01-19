@@ -11,18 +11,18 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "vehicle")
+@Table(name="vehicle")
 public class Vehicle {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long vehicleId;
 
     private String vehicleNumber;
     private String vehicleType;
 
     @ManyToOne
-    @JoinColumn(name = "customer_id")
+    @JoinColumn(name="customer_id")
     @JsonIgnore
     private User customer;
 

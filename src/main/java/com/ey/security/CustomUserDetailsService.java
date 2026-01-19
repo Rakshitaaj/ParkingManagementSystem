@@ -16,33 +16,17 @@ import com.ey.repository.UserRepository;
 import jakarta.transaction.Transactional;
 
 @Service
-public class CustomUserDetailsService
-        implements UserDetailsService {
+public class CustomUserDetailsService implements UserDetailsService {
 
     @Autowired
     private UserRepository userRepository;
 
     @Override
     @Transactional
-    public UserDetails loadUserByUsername(String username)
-            throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String username)throws UsernameNotFoundException {
+        User user = userRepository.findByUsername(username).orElseThrow(() ->new UsernameNotFoundException("User not found"));
 
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() ->
-                        new UsernameNotFoundException("User not found"));
-
-        return new org.springframework.security.core.userdetails.User(
-                user.getUsername(),
-                user.getPassword(),
-                user.isEnabled(),
-                true,
-                true,
-                true,
-                user.getAuthorities().stream()
-                        .map(Authority::getRole)
-                        .map(Enum::name)
-                        .map(SimpleGrantedAuthority::new)
-                        .collect(Collectors.toList())
-        );
+        return new org.springframework.security.core.userdetails.User(user.getUsername(),user.getPassword(),user.isEnabled(),true,true,true,
+        	user.getAuthorities().stream().map(Authority::getRole).map(Enum::name).map(SimpleGrantedAuthority::new).collect(Collectors.toList()));
     }
 }

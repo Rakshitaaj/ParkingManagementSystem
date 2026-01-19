@@ -21,11 +21,11 @@ public class ParkingSlot {
     private String slotNumber;
 
     @ManyToOne
-    @JoinColumn(name = "location_id")
+    @JoinColumn(name="location_id")
     @JsonIgnore
     private ParkingLocation location;
 
-    private boolean active = true;
+    private boolean active=true;
 
 	public Long getSlotId() {
 		return slotId;

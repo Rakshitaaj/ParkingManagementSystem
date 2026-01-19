@@ -4,5 +4,4 @@ public enum AllocationStatus {
 	ACTIVE,
 	COMPLETED,
 	CANCELLED
-
 }

@@ -20,73 +20,41 @@ import com.ey.service.UserService;
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
-
     @Autowired
     private UserService userService;
 
-
     @GetMapping("/{userId}")
-    public ResponseEntity<UserResponseDTO> getUserById(
-            @PathVariable Long userId) {
-
+    public ResponseEntity<UserResponseDTO> getUserById(@PathVariable Long userId) {
         User user = userService.getUserById(userId);
-
-        return ResponseEntity.ok(
-                UserMapper.toResponse(user));
+        return ResponseEntity.ok(UserMapper.toResponse(user));
     }
-
-
     @GetMapping
     public ResponseEntity<List<UserResponseDTO>> getAllUsers() {
-
         List<User> users = userService.getAllUsers();
-
-        List<UserResponseDTO> response =
-                users.stream()
-                        .map(UserMapper::toResponse)
-                        .toList();
-
+        List<UserResponseDTO> response =users.stream().map(UserMapper::toResponse).toList();
         return ResponseEntity.ok(response);
     }
 
-
     @PutMapping("/{userId}/activate")
-    public ResponseEntity<UserResponseDTO> activateUser(
-            @PathVariable Long userId) {
-
+    public ResponseEntity<UserResponseDTO> activateUser(@PathVariable Long userId) {
         User user = userService.activateUser(userId);
-
-        return ResponseEntity.ok(
-                UserMapper.toResponse(user));
+        return ResponseEntity.ok(UserMapper.toResponse(user));
     }
 
     @PutMapping("/{userId}/deactivate")
-    public ResponseEntity<UserResponseDTO> deactivateUser(
-            @PathVariable Long userId) {
-
+    public ResponseEntity<UserResponseDTO> deactivateUser(@PathVariable Long userId) {
         User user = userService.deactivateUser(userId);
-
-        return ResponseEntity.ok(
-                UserMapper.toResponse(user));
+        return ResponseEntity.ok(UserMapper.toResponse(user));
     }
     
     @GetMapping("/role/{role}")
-    public ResponseEntity<List<UserResponseDTO>> getUsersByRole(
-            @PathVariable Role role) {
-
-        List<UserResponseDTO> response =
-                userService.getUsersByRole(role)
-                        .stream()
-                        .map(UserMapper::toResponse)
-                        .toList();
-
+    public ResponseEntity<List<UserResponseDTO>> getUsersByRole(@PathVariable Role role) {
+        List<UserResponseDTO> response =userService.getUsersByRole(role).stream().map(UserMapper::toResponse).toList();
         return ResponseEntity.ok(response);
     }
     
     @DeleteMapping("/{userId}")
-    public ResponseEntity<String> deleteUser(
-            @PathVariable Long userId) {
-
+    public ResponseEntity<String> deleteUser(@PathVariable Long userId) {
         userService.deleteUser(userId);
         return ResponseEntity.ok("User deactivated successfully");
     }

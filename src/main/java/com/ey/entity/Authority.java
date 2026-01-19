@@ -15,19 +15,19 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "authorities")
+@Table(name="authorities")
 public class Authority {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long authorityId;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable=false)
     private Role role;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name="user_id")
     @JsonIgnore
     private User user;
 

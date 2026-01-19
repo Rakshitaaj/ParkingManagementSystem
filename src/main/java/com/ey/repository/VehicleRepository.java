@@ -8,6 +8,5 @@ import java.util.List;
 public interface VehicleRepository extends JpaRepository<Vehicle, Long> {
 
     List<Vehicle> findByCustomerUserId(Long customerId);
-
     boolean existsByVehicleNumber(String vehicleNumber);
 }

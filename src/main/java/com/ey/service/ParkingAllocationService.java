@@ -7,24 +7,14 @@ import java.util.List;
 
 public interface ParkingAllocationService {
 
-    ParkingAllocation allocateSlot(
-            Long customerId,
-            Long vehicleId,
-            Long slotId,
-            LocalDateTime startTime,
-            LocalDateTime endTime
-    );
+    ParkingAllocation allocateSlot(Long customerId,Long vehicleId,Long slotId,LocalDateTime startTime,LocalDateTime endTime);
 
     List<ParkingAllocation> getAllocationsByCustomer(Long customerId);
-
     List<ParkingAllocation> getAllocationsBySlot(Long slotId);
-
     ParkingAllocation cancelAllocation(Long allocationId);
 
     ParkingAllocation getAllocationById(Long allocationId);
 
-    ParkingAllocation extendAllocationTime(
-            Long allocationId,
-            LocalDateTime newEndTime);
+    ParkingAllocation extendAllocationTime(Long allocationId,LocalDateTime newEndTime);
 
 }

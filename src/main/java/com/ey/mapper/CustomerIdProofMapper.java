@@ -6,18 +6,19 @@ import com.ey.entity.CustomerIdProof;
 import com.ey.enums.IdProofType;
 
 public class CustomerIdProofMapper {
-
     public static CustomerIdProof toEntity(CustomerIdProofRequestDTO dto) {
         CustomerIdProof entity = new CustomerIdProof();
-        entity.setIdProofType(
-                IdProofType.valueOf(dto.getIdProofType().toUpperCase()));
+        entity.setIdProofType(IdProofType.valueOf(dto.getIdProofType().toUpperCase()));
         entity.setIdProofNumber(dto.getIdProofNumber());
+        
         return entity;
     }
 
+    
+    
     public static CustomerIdProofResponseDTO toResponse(CustomerIdProof entity) {
         CustomerIdProofResponseDTO dto = new CustomerIdProofResponseDTO();
-        dto.setId(entity.getId());
+        dto.setId(entity.getId());   
         dto.setIdProofType(entity.getIdProofType().name());
         dto.setIdProofNumber(entity.getIdProofNumber());
         return dto;

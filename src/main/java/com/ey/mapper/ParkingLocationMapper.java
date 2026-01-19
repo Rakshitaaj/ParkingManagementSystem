@@ -5,7 +5,6 @@ import com.ey.dto.response.ParkingLocationResponseDTO;
 import com.ey.entity.ParkingLocation;
 
 public class ParkingLocationMapper {
-
     public static ParkingLocation toEntity(ParkingLocationRequestDTO dto) {
         ParkingLocation location = new ParkingLocation();
         location.setLocationName(dto.getLocationName());
@@ -15,6 +14,7 @@ public class ParkingLocationMapper {
         return location;
     }
 
+    
     public static ParkingLocationResponseDTO toResponse(ParkingLocation location) {
         ParkingLocationResponseDTO dto = new ParkingLocationResponseDTO();
         dto.setLocationId(location.getLocationId());

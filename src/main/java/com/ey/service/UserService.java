@@ -13,10 +13,8 @@ public interface UserService {
 
     User activateUser(Long userId);
 
-    User deactivateUser(Long userId);
-    
+    User deactivateUser(Long userId);   
     List<User> getUsersByRole(Role role);
-    
     void deleteUser(Long userId);
 
 

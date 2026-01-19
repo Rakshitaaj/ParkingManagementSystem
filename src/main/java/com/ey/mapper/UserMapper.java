@@ -5,8 +5,6 @@ import com.ey.dto.response.UserResponseDTO;
 import com.ey.entity.User;
 
 public class UserMapper {
-
-    // RequestDTO → Entity
     public static User toEntity(RegisterRequestDTO dto) {
         User user = new User();
         user.setFullName(dto.getFullName());
@@ -16,7 +14,7 @@ public class UserMapper {
         return user;
     }
 
-    // Entity → ResponseDTO
+
     public static UserResponseDTO toResponse(User user) {
         UserResponseDTO dto = new UserResponseDTO();
         dto.setUserId(user.getUserId());

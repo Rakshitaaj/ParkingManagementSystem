@@ -13,39 +13,21 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 public class SecurityConfig {
-
     @Autowired
     private JwtFilter jwtFilter;
-
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http)
-            throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http)throws Exception {
 
-        http
-            .csrf(csrf -> csrf.disable())
-            .sessionManagement(session ->
-                    session.sessionCreationPolicy(
-                            SessionCreationPolicy.STATELESS))
-            .authorizeHttpRequests(auth -> auth
+      http.csrf(csrf -> csrf.disable()).sessionManagement(session ->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .authorizeHttpRequests(auth -> auth.requestMatchers("/api/auth/**").permitAll().requestMatchers("/api/users/**")
+            		.hasAuthority("ROLE_ADMIN").anyRequest().authenticated());
 
-                .requestMatchers("/api/auth/**").permitAll()
-
-                .requestMatchers("/api/users/**")
-                    .hasAuthority("ROLE_ADMIN")
-
-                .anyRequest().authenticated()
-            );
-
-        http.addFilterBefore(
-                jwtFilter,
-                UsernamePasswordAuthenticationFilter.class);
-
-        return http.build();
+      http.addFilterBefore(jwtFilter,UsernamePasswordAuthenticationFilter.class);
+      return http.build();
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(
-            AuthenticationConfiguration config) throws Exception {
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
 }

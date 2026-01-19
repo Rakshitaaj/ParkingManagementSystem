@@ -15,7 +15,7 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "customer_id_proof")
+@Table(name="customer_id_proof")
 public class CustomerIdProof {
 
     @Id
@@ -29,7 +29,7 @@ public class CustomerIdProof {
     private String idProofNumber;
 
     @OneToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name ="user_id",nullable=false)
     @JsonIgnore
     private User customer;
 

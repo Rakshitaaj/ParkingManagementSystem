@@ -9,6 +9,8 @@ import com.ey.entity.ParkingSlot;
 import com.ey.entity.Vehicle;
 
 public interface CustomerService {
+	
+	
 
     CustomerIdProof addIdProof(Long customerId, CustomerIdProof idProof);
     CustomerIdProof getIdProof(Long customerId);
@@ -16,11 +18,9 @@ public interface CustomerService {
     Vehicle addVehicle(Long customerId, Vehicle vehicle);
     List<Vehicle> getVehiclesByCustomer(Long customerId);
 
+    
     List<ParkingLocation> getParkingLocationsByCity(String city);
 
-    List<ParkingSlot> getAvailableSlots(
-            Long locationId,
-            LocalDateTime startTime,
-            LocalDateTime endTime);
+    List<ParkingSlot> getAvailableSlots(Long locationId,LocalDateTime startTime,LocalDateTime endTime);
 
 }

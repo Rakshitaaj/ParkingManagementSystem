@@ -36,104 +36,55 @@ public class CustomerController {
     @Autowired
     private CustomerService customerService;
 
-
     @PostMapping("/{customerId}/id-proof")
-    public ResponseEntity<CustomerIdProofResponseDTO> addIdProof(
-            @PathVariable Long customerId,
-            @Valid @RequestBody CustomerIdProofRequestDTO request) {
+    public ResponseEntity<CustomerIdProofResponseDTO> addIdProof(@PathVariable Long customerId, @Valid @RequestBody CustomerIdProofRequestDTO request) {
 
-        CustomerIdProof idProof =
-                CustomerIdProofMapper.toEntity(request);
-
-        
-        CustomerIdProof saved =
-                customerService.addIdProof(customerId, idProof);
-
-        
-        return ResponseEntity.ok(
-                CustomerIdProofMapper.toResponse(saved));
+        CustomerIdProof idProof =CustomerIdProofMapper.toEntity(request);
+        CustomerIdProof saved =customerService.addIdProof(customerId, idProof);
+        return ResponseEntity.ok(CustomerIdProofMapper.toResponse(saved));
     }
 
     @GetMapping("/{customerId}/id-proof")
-    public ResponseEntity<CustomerIdProofResponseDTO> getIdProof(
-            @PathVariable Long customerId) {
-
-        CustomerIdProof saved =
-                customerService.getIdProof(customerId);
-
-        return ResponseEntity.ok(
-                CustomerIdProofMapper.toResponse(saved));
+    public ResponseEntity<CustomerIdProofResponseDTO> getIdProof(@PathVariable Long customerId) {
+        CustomerIdProof saved =customerService.getIdProof(customerId);
+        return ResponseEntity.ok(CustomerIdProofMapper.toResponse(saved));
     }
 
-   
-
     @PostMapping("/{customerId}/vehicles")
-    public ResponseEntity<VehicleResponseDTO> addVehicle(
-            @PathVariable Long customerId,
-            @Valid @RequestBody VehicleRequestDTO request) {
-
-        
+    public ResponseEntity<VehicleResponseDTO> addVehicle(@PathVariable Long customerId,@Valid @RequestBody VehicleRequestDTO request) {        
         Vehicle vehicle = VehicleMapper.toEntity(request);
-
-       
-        Vehicle saved =
-                customerService.addVehicle(customerId, vehicle);
-
-        
-        return ResponseEntity.ok(
-                VehicleMapper.toResponse(saved));
+        Vehicle saved =customerService.addVehicle(customerId, vehicle);      
+        return ResponseEntity.ok(VehicleMapper.toResponse(saved));
     }
 
     @GetMapping("/{customerId}/vehicles")
-    public ResponseEntity<List<VehicleResponseDTO>> getVehicles(
-            @PathVariable Long customerId) {
+    public ResponseEntity<List<VehicleResponseDTO>> getVehicles(@PathVariable Long customerId) {
 
-        List<Vehicle> vehicles =
-                customerService.getVehiclesByCustomer(customerId);
-
-        List<VehicleResponseDTO> response =
-                vehicles.stream()
-                        .map(VehicleMapper::toResponse)
-                        .toList();
-
+        List<Vehicle> vehicles =customerService.getVehiclesByCustomer(customerId);
+        List<VehicleResponseDTO> response =vehicles.stream().map(VehicleMapper::toResponse).toList();
         return ResponseEntity.ok(response);
     }
 
 
     @GetMapping("/parking-locations")
-    public ResponseEntity<List<ParkingLocationResponseDTO>> searchParking(
-            @RequestParam String city) {
+    public ResponseEntity<List<ParkingLocationResponseDTO>> searchParking(@RequestParam String city) {
 
-        List<ParkingLocation> locations =
-                customerService.getParkingLocationsByCity(city);
-
-        List<ParkingLocationResponseDTO> response =
-                locations.stream().map(l -> {
-                    ParkingLocationResponseDTO dto =
-                            new ParkingLocationResponseDTO();
+        List<ParkingLocation> locations =customerService.getParkingLocationsByCity(city);
+        List<ParkingLocationResponseDTO> response =locations.stream().map(l -> {ParkingLocationResponseDTO dto =new ParkingLocationResponseDTO();
                     dto.setLocationId(l.getLocationId());
                     dto.setLocationName(l.getLocationName());
                     dto.setAddress(l.getAddress());
                     dto.setCity(l.getCity());
                     dto.setActive(l.isActive());
-                    return dto;
-                }).toList();
-
+                    return dto;}).toList();
         return ResponseEntity.ok(response);
     }
     
     @GetMapping("/locations/{locationId}/available-slots")
-    public ResponseEntity<List<ParkingSlotResponseDTO>> getAvailableSlots(
-            @PathVariable Long locationId,
-            @RequestParam LocalDateTime startTime,
-            @RequestParam LocalDateTime endTime) {
+    public ResponseEntity<List<ParkingSlotResponseDTO>> getAvailableSlots(@PathVariable Long locationId,@RequestParam LocalDateTime startTime,@RequestParam LocalDateTime endTime) {
 
-        return ResponseEntity.ok(
-                customerService
-                        .getAvailableSlots(locationId, startTime, endTime)
-                        .stream()
-                        .map(ParkingSlotMapper::toResponse)
-                        .toList());
+        return ResponseEntity.ok(customerService.getAvailableSlots(locationId, startTime, endTime).stream()
+                        .map(ParkingSlotMapper::toResponse).toList());
     }
 
 }

@@ -6,12 +6,15 @@ import com.ey.entity.ParkingSlot;
 
 public class ParkingSlotMapper {
 
+	
+	
     public static ParkingSlot toEntity(ParkingSlotRequestDTO dto) {
         ParkingSlot slot = new ParkingSlot();
         slot.setSlotNumber(dto.getSlotNumber());
         return slot;
     }
 
+    
     public static ParkingSlotResponseDTO toResponse(ParkingSlot slot) {
         ParkingSlotResponseDTO dto = new ParkingSlotResponseDTO();
         dto.setSlotId(slot.getSlotId());

@@ -33,123 +33,63 @@ public class ParkingProviderController {
     private ParkingProviderService parkingProviderService;
 
     @PostMapping("/{providerId}/locations")
-    public ResponseEntity<ParkingLocationResponseDTO> addLocation(
-            @PathVariable Long providerId,
-            @Valid @RequestBody ParkingLocationRequestDTO request) {
-
-        ParkingLocation location =
-                ParkingLocationMapper.toEntity(request);
-
-        ParkingLocation saved =
-                parkingProviderService.addLocation(providerId, location);
-
-        return ResponseEntity.ok(
-                ParkingLocationMapper.toResponse(saved));
+    public ResponseEntity<ParkingLocationResponseDTO> addLocation(@PathVariable Long providerId,@Valid @RequestBody ParkingLocationRequestDTO request) {
+        ParkingLocation location =ParkingLocationMapper.toEntity(request);
+        ParkingLocation saved =parkingProviderService.addLocation(providerId, location);
+        return ResponseEntity.ok(ParkingLocationMapper.toResponse(saved));
     }
 
     @PutMapping("/{providerId}/locations/{locationId}")
-    public ResponseEntity<ParkingLocationResponseDTO> updateLocation(
-            @PathVariable Long providerId,
-            @PathVariable Long locationId,
-            @Valid @RequestBody ParkingLocationRequestDTO request) {
+    public ResponseEntity<ParkingLocationResponseDTO> updateLocation(@PathVariable Long providerId,@PathVariable Long locationId,@Valid @RequestBody ParkingLocationRequestDTO request){
 
-        ParkingLocation location =
-                ParkingLocationMapper.toEntity(request);
-
-        ParkingLocation updated =
-                parkingProviderService.updateLocation(
-                        providerId, locationId, location);
-
-        return ResponseEntity.ok(
-                ParkingLocationMapper.toResponse(updated));
+        ParkingLocation location =ParkingLocationMapper.toEntity(request);
+        ParkingLocation updated =parkingProviderService.updateLocation(providerId, locationId, location);
+        return ResponseEntity.ok(ParkingLocationMapper.toResponse(updated));
     }
 
     @GetMapping("/{providerId}/locations")
-    public ResponseEntity<List<ParkingLocationResponseDTO>> getLocationsByProvider(
-            @PathVariable Long providerId) {
-
-        List<ParkingLocation> locations =
-                parkingProviderService.getLocationsByProvider(providerId);
-
-        List<ParkingLocationResponseDTO> response =
-                locations.stream()
-                        .map(ParkingLocationMapper::toResponse)
-                        .toList();
-
+    public ResponseEntity<List<ParkingLocationResponseDTO>> getLocationsByProvider(@PathVariable Long providerId) {
+        List<ParkingLocation> locations =parkingProviderService.getLocationsByProvider(providerId);
+        List<ParkingLocationResponseDTO> response =locations.stream().map(ParkingLocationMapper::toResponse).toList();
         return ResponseEntity.ok(response);
     }
-
-
+    
     @PostMapping("/locations/{locationId}/slots")
-    public ResponseEntity<ParkingSlotResponseDTO> addSlot(
-            @PathVariable Long locationId,
-            @Valid @RequestBody ParkingSlotRequestDTO request) {
-
-        ParkingSlot slot =
-                ParkingSlotMapper.toEntity(request);
-
-        ParkingSlot saved =
-                parkingProviderService.addSlot(locationId, slot);
-
-        return ResponseEntity.ok(
-                ParkingSlotMapper.toResponse(saved));
+    public ResponseEntity<ParkingSlotResponseDTO> addSlot(@PathVariable Long locationId,@Valid @RequestBody ParkingSlotRequestDTO request) {
+        ParkingSlot slot =ParkingSlotMapper.toEntity(request);
+        ParkingSlot saved =parkingProviderService.addSlot(locationId, slot);
+        return ResponseEntity.ok(ParkingSlotMapper.toResponse(saved));
     }
 
     @GetMapping("/locations/{locationId}/slots")
-    public ResponseEntity<List<ParkingSlotResponseDTO>> getSlotsByLocation(
-            @PathVariable Long locationId) {
-
-        List<ParkingSlot> slots =
-                parkingProviderService.getSlotsByLocation(locationId);
-
-        List<ParkingSlotResponseDTO> response =
-                slots.stream()
-                        .map(ParkingSlotMapper::toResponse)
-                        .toList();
-
+    public ResponseEntity<List<ParkingSlotResponseDTO>> getSlotsByLocation(@PathVariable Long locationId) {
+        List<ParkingSlot> slots =parkingProviderService.getSlotsByLocation(locationId);
+        List<ParkingSlotResponseDTO> response =slots.stream().map(ParkingSlotMapper::toResponse).toList();
         return ResponseEntity.ok(response);
     }
 
     @PutMapping("/slots/{slotId}/activate")
-    public ResponseEntity<ParkingSlotResponseDTO> activateSlot(
-            @PathVariable Long slotId) {
-
-        ParkingSlot slot =
-                parkingProviderService.activateSlot(slotId);
-
-        return ResponseEntity.ok(
-                ParkingSlotMapper.toResponse(slot));
+    public ResponseEntity<ParkingSlotResponseDTO> activateSlot(@PathVariable Long slotId) {
+        ParkingSlot slot =parkingProviderService.activateSlot(slotId);
+        return ResponseEntity.ok(ParkingSlotMapper.toResponse(slot));
     }
 
     @PutMapping("/slots/{slotId}/deactivate")
-    public ResponseEntity<ParkingSlotResponseDTO> deactivateSlot(
-            @PathVariable Long slotId) {
-
-        ParkingSlot slot =
-                parkingProviderService.deactivateSlot(slotId);
-
-        return ResponseEntity.ok(
-                ParkingSlotMapper.toResponse(slot));
+    public ResponseEntity<ParkingSlotResponseDTO> deactivateSlot(@PathVariable Long slotId) {
+        ParkingSlot slot =parkingProviderService.deactivateSlot(slotId);
+        return ResponseEntity.ok(ParkingSlotMapper.toResponse(slot));
     }
     
     @PutMapping("/slots/{slotId}")
-    public ResponseEntity<ParkingSlotResponseDTO> updateSlot(
-            @PathVariable Long slotId,
-            @RequestBody ParkingSlotRequestDTO request) {
-
+    public ResponseEntity<ParkingSlotResponseDTO> updateSlot(@PathVariable Long slotId,@RequestBody ParkingSlotRequestDTO request) {
         ParkingSlot slot = new ParkingSlot();
         slot.setSlotNumber(request.getSlotNumber());
-        slot.setActive(request.getActive()); // ✅ FIXED
-
-        return ResponseEntity.ok(
-                ParkingSlotMapper.toResponse(
-                        parkingProviderService.updateSlot(slotId, slot)));
+        slot.setActive(request.getActive()); 
+        return ResponseEntity.ok(ParkingSlotMapper.toResponse(parkingProviderService.updateSlot(slotId, slot)));
     }
     
     @DeleteMapping("/slots/{slotId}")
-    public ResponseEntity<String> deleteSlot(
-            @PathVariable Long slotId) {
-
+    public ResponseEntity<String> deleteSlot(@PathVariable Long slotId) {
         parkingProviderService.deleteSlot(slotId);
         return ResponseEntity.ok("Parking slot deleted successfully");
     }

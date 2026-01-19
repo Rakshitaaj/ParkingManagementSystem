@@ -22,93 +22,48 @@ import com.ey.service.ParkingAllocationService;
 @RestController
 @RequestMapping("/api/allocations")
 public class ParkingAllocationController {
-
     @Autowired
     private ParkingAllocationService parkingAllocationService;
 
-
     @PostMapping
-    public ResponseEntity<ParkingAllocation> allocateSlot(
-            @RequestParam Long customerId,
-            @RequestParam Long vehicleId,
-            @RequestParam Long slotId,
-
-            @RequestParam
-            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-            LocalDateTime startTime,
-
-            @RequestParam
-            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-            LocalDateTime endTime) {
-
-        return ResponseEntity.ok(
-                parkingAllocationService.allocateSlot(
-                        customerId, vehicleId, slotId, startTime, endTime));
+    public ResponseEntity<ParkingAllocation> allocateSlot(@RequestParam Long customerId,@RequestParam Long vehicleId,
+            @RequestParam Long slotId,@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)LocalDateTime startTime,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)LocalDateTime endTime) {
+        return ResponseEntity.ok(parkingAllocationService.allocateSlot(customerId, vehicleId, slotId, startTime, endTime));
     }
 
-
     @GetMapping("/customer/{customerId}")
-    public ResponseEntity<List<ParkingAllocationResponseDTO>> getAllocationsByCustomer(
-            @PathVariable Long customerId) {
+    public ResponseEntity<List<ParkingAllocationResponseDTO>> getAllocationsByCustomer(@PathVariable Long customerId) {
 
-        List<ParkingAllocation> allocations =
-                parkingAllocationService.getAllocationsByCustomer(customerId);
-
-        List<ParkingAllocationResponseDTO> response =
-                allocations.stream()
-                        .map(ParkingAllocationMapper::toResponse)
-                        .toList();
-
+        List<ParkingAllocation> allocations=parkingAllocationService.getAllocationsByCustomer(customerId);
+        List<ParkingAllocationResponseDTO> response=allocations.stream().map(ParkingAllocationMapper::toResponse).toList();
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/slot/{slotId}")
-    public ResponseEntity<List<ParkingAllocationResponseDTO>> getAllocationsBySlot(
-            @PathVariable Long slotId) {
-
-        List<ParkingAllocation> allocations =
-                parkingAllocationService.getAllocationsBySlot(slotId);
-
-        List<ParkingAllocationResponseDTO> response =
-                allocations.stream()
-                        .map(ParkingAllocationMapper::toResponse)
-                        .toList();
-
+    public ResponseEntity<List<ParkingAllocationResponseDTO>> getAllocationsBySlot(@PathVariable Long slotId) {
+        List<ParkingAllocation> allocations =parkingAllocationService.getAllocationsBySlot(slotId);
+        List<ParkingAllocationResponseDTO> response =allocations.stream().map(ParkingAllocationMapper::toResponse).toList();
         return ResponseEntity.ok(response);
     }
 
 
     @PutMapping("/{allocationId}/cancel")
-    public ResponseEntity<ParkingAllocationResponseDTO> cancelAllocation(
-            @PathVariable Long allocationId) {
+    public ResponseEntity<ParkingAllocationResponseDTO> cancelAllocation(@PathVariable Long allocationId) {
 
-        ParkingAllocation allocation =
-                parkingAllocationService.cancelAllocation(allocationId);
-
-        return ResponseEntity.ok(
-                ParkingAllocationMapper.toResponse(allocation));
+        ParkingAllocation allocation =parkingAllocationService.cancelAllocation(allocationId);
+        return ResponseEntity.ok(ParkingAllocationMapper.toResponse(allocation));
     }
     
     @GetMapping("/{allocationId}")
-    public ResponseEntity<ParkingAllocationResponseDTO> getAllocationById(
-            @PathVariable Long allocationId) {
-
-        ParkingAllocation allocation =
-                parkingAllocationService.getAllocationById(allocationId);
-
-        return ResponseEntity.ok(
-                ParkingAllocationMapper.toResponse(allocation));
+    public ResponseEntity<ParkingAllocationResponseDTO> getAllocationById(@PathVariable Long allocationId) {
+        ParkingAllocation allocation =parkingAllocationService.getAllocationById(allocationId);
+        return ResponseEntity.ok(ParkingAllocationMapper.toResponse(allocation));
     }
     
     @PutMapping("/{allocationId}/extend")
-    public ResponseEntity<ParkingAllocationResponseDTO> extendAllocation(
-            @PathVariable Long allocationId,
-            @RequestParam LocalDateTime newEndTime) {
-
-        return ResponseEntity.ok(
-                ParkingAllocationMapper.toResponse(
-                        parkingAllocationService
-                                .extendAllocationTime(allocationId, newEndTime)));
+    public ResponseEntity<ParkingAllocationResponseDTO> extendAllocation(@PathVariable Long allocationId,@RequestParam LocalDateTime newEndTime) {
+        return ResponseEntity.ok(ParkingAllocationMapper.toResponse(parkingAllocationService.extendAllocationTime(allocationId, newEndTime)));
     }
 
 

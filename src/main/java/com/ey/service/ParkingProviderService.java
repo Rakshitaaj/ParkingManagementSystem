@@ -11,6 +11,7 @@ public interface ParkingProviderService {
     ParkingLocation updateLocation(Long providerId, Long locationId, ParkingLocation location);
     List<ParkingLocation> getLocationsByProvider(Long providerId);
 
+    
     ParkingSlot addSlot(Long locationId, ParkingSlot slot);
     List<ParkingSlot> getSlotsByLocation(Long locationId);
     ParkingSlot activateSlot(Long slotId);

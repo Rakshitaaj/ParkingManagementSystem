@@ -10,18 +10,10 @@ public interface ParkingAllocationRepository extends JpaRepository<ParkingAlloca
 
     List<ParkingAllocation> findByCustomerUserId(Long customerId);
 
-    List<ParkingAllocation> findBySlotSlotId(Long slotId);
-
-    boolean existsBySlotSlotIdAndStartTimeLessThanAndEndTimeGreaterThan(
-            Long slotId,
-            LocalDateTime endTime,
-            LocalDateTime startTime
-    );
     
-    List<ParkingAllocation>
-    findBySlotSlotIdAndStartTimeLessThanAndEndTimeGreaterThan(
-            Long slotId,
-            LocalDateTime endTime,
-            LocalDateTime startTime);
+    List<ParkingAllocation> findBySlotSlotId(Long slotId);
+    boolean existsBySlotSlotIdAndStartTimeLessThanAndEndTimeGreaterThan(Long slotId,LocalDateTime endTime,LocalDateTime startTime);
+    
+    List<ParkingAllocation> findBySlotSlotIdAndStartTimeLessThanAndEndTimeGreaterThan(Long slotId,LocalDateTime endTime,LocalDateTime startTime);
 
 }

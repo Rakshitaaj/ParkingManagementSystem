@@ -4,7 +4,6 @@ import com.ey.dto.response.PaymentResponseDTO;
 import com.ey.entity.Payment;
 
 public class PaymentMapper {
-
     public static PaymentResponseDTO toResponse(Payment payment) {
         PaymentResponseDTO dto = new PaymentResponseDTO();
         dto.setPaymentId(payment.getPaymentId());
