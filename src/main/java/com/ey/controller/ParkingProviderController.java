@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -39,6 +38,8 @@ public class ParkingProviderController {
         return ResponseEntity.ok(ParkingLocationMapper.toResponse(saved));
     }
 
+    
+    
     @PutMapping("/{providerId}/locations/{locationId}")
     public ResponseEntity<ParkingLocationResponseDTO> updateLocation(@PathVariable Long providerId,@PathVariable Long locationId,@Valid @RequestBody ParkingLocationRequestDTO request){
 
@@ -46,6 +47,8 @@ public class ParkingProviderController {
         ParkingLocation updated =parkingProviderService.updateLocation(providerId, locationId, location);
         return ResponseEntity.ok(ParkingLocationMapper.toResponse(updated));
     }
+    
+    
 
     @GetMapping("/{providerId}/locations")
     public ResponseEntity<List<ParkingLocationResponseDTO>> getLocationsByProvider(@PathVariable Long providerId) {
@@ -54,12 +57,18 @@ public class ParkingProviderController {
         return ResponseEntity.ok(response);
     }
     
+    
+    
+    
     @PostMapping("/locations/{locationId}/slots")
     public ResponseEntity<ParkingSlotResponseDTO> addSlot(@PathVariable Long locationId,@Valid @RequestBody ParkingSlotRequestDTO request) {
         ParkingSlot slot =ParkingSlotMapper.toEntity(request);
         ParkingSlot saved =parkingProviderService.addSlot(locationId, slot);
         return ResponseEntity.ok(ParkingSlotMapper.toResponse(saved));
     }
+    
+    
+    
 
     @GetMapping("/locations/{locationId}/slots")
     public ResponseEntity<List<ParkingSlotResponseDTO>> getSlotsByLocation(@PathVariable Long locationId) {
@@ -88,11 +97,7 @@ public class ParkingProviderController {
         return ResponseEntity.ok(ParkingSlotMapper.toResponse(parkingProviderService.updateSlot(slotId, slot)));
     }
     
-    @DeleteMapping("/slots/{slotId}")
-    public ResponseEntity<String> deleteSlot(@PathVariable Long slotId) {
-        parkingProviderService.deleteSlot(slotId);
-        return ResponseEntity.ok("Parking slot deleted successfully");
-    }
+    
 
 
 

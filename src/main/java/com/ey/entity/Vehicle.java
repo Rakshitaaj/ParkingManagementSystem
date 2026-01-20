@@ -1,6 +1,6 @@
 package com.ey.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -23,7 +23,6 @@ public class Vehicle {
 
     @ManyToOne
     @JoinColumn(name="customer_id")
-    @JsonIgnore
     private User customer;
 
 	public Long getVehicleId() {

@@ -20,13 +20,14 @@ public class AuthController {
 
     @PostMapping("/register/{role}")
     public ResponseEntity<UserResponseDTO> register(@PathVariable String role,@Valid @RequestBody RegisterRequestDTO request) {
-
         User user = UserMapper.toEntity(request);
         User savedUser = authService.register(user, role);
         UserResponseDTO response = UserMapper.toResponse(savedUser);
         return ResponseEntity.ok(response);
     }
 
+    
+    
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestParam String username,@RequestParam String password) {
         return ResponseEntity.ok(authService.login(username, password));
@@ -38,6 +39,8 @@ public class AuthController {
         return ResponseEntity.ok("Reset token generated and sent to email: " + resetToken);
     }
 
+    
+    
     @PostMapping("/reset-password")
     public ResponseEntity<String> resetPassword(@RequestParam String resetToken,@RequestParam String newPassword) {
         authService.resetPassword(resetToken, newPassword);

@@ -128,9 +128,10 @@ public class CustomerServiceImpl implements CustomerService {
 			logger.error("Invalid time range: startTime {} is after endTime {}", startTime, endTime);
 			throw new BadRequestException("Start time must be before end time");
 		}
+		
+		
 		List<ParkingSlot> activeSlots = slotRepository.findByLocationLocationIdAndActiveTrue(locationId);
-		List<ParkingSlot> availableSlots = activeSlots.stream()
-				.filter(slot -> allocationRepository.findBySlotSlotIdAndStartTimeLessThanAndEndTimeGreaterThan(slot.getSlotId(), endTime, startTime)
+		List<ParkingSlot> availableSlots = activeSlots.stream().filter(slot -> allocationRepository.findBySlotSlotIdAndStartTimeLessThanAndEndTimeGreaterThan(slot.getSlotId(), endTime, startTime)
 						.isEmpty()).toList();
 
 		logger.info("Available slots found: {} for locationId {}", availableSlots.size(), locationId);

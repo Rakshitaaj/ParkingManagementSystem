@@ -28,6 +28,8 @@ public class UserController {
         User user = userService.getUserById(userId);
         return ResponseEntity.ok(UserMapper.toResponse(user));
     }
+    
+    
     @GetMapping
     public ResponseEntity<List<UserResponseDTO>> getAllUsers() {
         List<User> users = userService.getAllUsers();
@@ -47,11 +49,15 @@ public class UserController {
         return ResponseEntity.ok(UserMapper.toResponse(user));
     }
     
+    
+    
     @GetMapping("/role/{role}")
     public ResponseEntity<List<UserResponseDTO>> getUsersByRole(@PathVariable Role role) {
         List<UserResponseDTO> response =userService.getUsersByRole(role).stream().map(UserMapper::toResponse).toList();
         return ResponseEntity.ok(response);
     }
+    
+    
     
     @DeleteMapping("/{userId}")
     public ResponseEntity<String> deleteUser(@PathVariable Long userId) {

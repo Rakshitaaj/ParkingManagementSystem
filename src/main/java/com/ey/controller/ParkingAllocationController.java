@@ -31,10 +31,10 @@ public class ParkingAllocationController {
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)LocalDateTime endTime) {
         return ResponseEntity.ok(parkingAllocationService.allocateSlot(customerId, vehicleId, slotId, startTime, endTime));
     }
+    
 
     @GetMapping("/customer/{customerId}")
     public ResponseEntity<List<ParkingAllocationResponseDTO>> getAllocationsByCustomer(@PathVariable Long customerId) {
-
         List<ParkingAllocation> allocations=parkingAllocationService.getAllocationsByCustomer(customerId);
         List<ParkingAllocationResponseDTO> response=allocations.stream().map(ParkingAllocationMapper::toResponse).toList();
         return ResponseEntity.ok(response);
@@ -47,19 +47,24 @@ public class ParkingAllocationController {
         return ResponseEntity.ok(response);
     }
 
+    
+    
 
     @PutMapping("/{allocationId}/cancel")
     public ResponseEntity<ParkingAllocationResponseDTO> cancelAllocation(@PathVariable Long allocationId) {
-
         ParkingAllocation allocation =parkingAllocationService.cancelAllocation(allocationId);
         return ResponseEntity.ok(ParkingAllocationMapper.toResponse(allocation));
     }
+    
+    
     
     @GetMapping("/{allocationId}")
     public ResponseEntity<ParkingAllocationResponseDTO> getAllocationById(@PathVariable Long allocationId) {
         ParkingAllocation allocation =parkingAllocationService.getAllocationById(allocationId);
         return ResponseEntity.ok(ParkingAllocationMapper.toResponse(allocation));
     }
+    
+    
     
     @PutMapping("/{allocationId}/extend")
     public ResponseEntity<ParkingAllocationResponseDTO> extendAllocation(@PathVariable Long allocationId,@RequestParam LocalDateTime newEndTime) {

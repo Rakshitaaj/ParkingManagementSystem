@@ -40,6 +40,9 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public User register(User user, String role) {
         logger.info("Register attempt for username: {}", user.getUsername());
+        if ("ROLE_ADMIN".equalsIgnoreCase(role)) {
+            throw new BadRequestException("Admin registration is not allowed");
+        }
         if (userRepository.existsByUsername(user.getUsername())) {
             logger.warn("Registration failed - username already exists: {}",user.getUsername());
             throw new ConflictException("Username already exists");
@@ -61,15 +64,16 @@ public class AuthServiceImpl implements AuthService {
         return savedUser;
     }
 
+    
+    
     @Override
     public String login(String username, String password) {
 
         logger.info("Login attempt for username: {}", username);
 
-        User user = userRepository.findByUsername(username).orElseThrow(() -> {
-                    logger.error("Login failed - invalid username: {}", username);
-                    return new ResourceNotFoundException("Invalid username");
-                });
+        User user = userRepository.findByUsername(username).orElseThrow(()->{
+                   logger.error("Login failed - invalid username: {}", username);
+                   return new ResourceNotFoundException("Invalid username");});
 
         if (!passwordEncoder.matches(password, user.getPassword())) {
             logger.error("Login failed - invalid password for username: {}", username);
@@ -87,8 +91,7 @@ public class AuthServiceImpl implements AuthService {
 
         User user = userRepository.findByEmail(email).orElseThrow(() -> {
                     logger.warn("Forgot password failed - email not registered: {}", email);
-                    return new ResourceNotFoundException("Email not registered");
-                });
+                    return new ResourceNotFoundException("Email not registered");});
 
         String resetToken = UUID.randomUUID().toString();
         user.setResetToken(resetToken);
@@ -97,17 +100,17 @@ public class AuthServiceImpl implements AuthService {
         return resetToken;
     }
 
+    
+    
 
     @Override
     public void resetPassword(String resetToken, String newPassword) {
 
         logger.info("Reset password attempt with token: {}", resetToken);
 
-        User user = userRepository.findByResetToken(resetToken).orElseThrow(() -> 
-        {
+        User user = userRepository.findByResetToken(resetToken).orElseThrow(()->{
                     logger.error("Reset password failed - invalid token");
-                    return new BadRequestException("Invalid reset token");
-        });
+                    return new BadRequestException("Invalid reset token");});
 
         user.setPassword(passwordEncoder.encode(newPassword));
         user.setResetToken(null);
